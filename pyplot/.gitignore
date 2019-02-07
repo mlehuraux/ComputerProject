@@ -1,0 +1,26 @@
+# Python 
+*.py[cod]
+
+# Sphinx documentation
+doc/build/
+
+# stuff from Hieroglyph
+*.pickle
+_build/
+*.js
+*.svg
+
+# Local docs
+doc/*.pdf
+doc/**/slides/*-bak
+
+# PyCharm stuff
+.idea/
+
+# Distribution / packaging
+venv*
+
+~*
+
+
+

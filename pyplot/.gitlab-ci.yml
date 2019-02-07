@@ -1,0 +1,15 @@
+sonar:
+  script:
+    - /opt/sonar/pro/bin/sonar-scanner
+  tags:
+    - sonar
+
+pyplot-checks:
+  script:
+    - python --version
+    - /opt/pyplot_checks/test_pyplot_exercises
+  tags:
+    - pyplot-checks
+
+variables:
+  GIT_SSL_NO_VERIFY: "true"
