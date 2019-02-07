@@ -9,11 +9,7 @@
 First program hello.py: display "Hello, world!" on standard output.
 """
 
-###
-#print("Hello, world!")
 print("Best Binome Ever")
-# This is a test
-###
 
 import sys
 
