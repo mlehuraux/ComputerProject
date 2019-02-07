@@ -5,14 +5,14 @@ from npac import args
 from astropy.io import fits
 import numpy as np
 import matplotlib.pyplot as plt
-
+import lib_fits
 
 def main():
     """ Exercise 1: Read Image """
     # Allowed names for file_name
     names = ["common", "specific", "global", "dss.16.54.38.6-76.08.22.5"]
 
-    # Check that file_name is coorect. If not, write it again and specify interactive
+    # Check that file_name is correct. If not, write it again and specify interactive
     try:
         file_name, interactive = args.get_args()
     except FileNotFoundError:
@@ -58,4 +58,6 @@ def main():
 
 if __name__ == '__main__':
     """ Execute exercise 1 """
-    sys.exit(main())
+    #.exit(main())
+    header, pixels = lib_fits.read_first_image(common)
+    print(pixels)
