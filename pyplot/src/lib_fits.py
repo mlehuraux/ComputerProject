@@ -20,15 +20,4 @@ def read_first_image(file_name):
         print("Error with file name")
         exit()
 
-    #show figure
-    if interactive:
-        fig, main_axes = plt.subplots()
-        imgplot = main_axes.imshow(pixels)
-        plt.show()
-
-    # example of console output - please replace it with your solutions!
-    # ...
-    print('RESULT: file = {}'.format(file_name))
-    print('RESULT: interactive = {}'.format(interactive))
-
     return header, pixels

@@ -25,6 +25,18 @@ def main():
             interactive = False
 
     header, pixels = lib_fits.read_first_image(file_name)
+
+    #show figure
+    if interactive:
+        fig, main_axes = plt.subplots()
+        imgplot = main_axes.imshow(pixels)
+        plt.show()
+
+    # example of console output - please replace it with your solutions!
+    # ...
+    #print('RESULT: file = {}'.format(file_name))
+    #print('RESULT: interactive = {}'.format(interactive))
+
     signature_fmt_1 = header.get("CRPIX1")
     signature_fmt_2 = header.get("CRPIX2")
     print('RESULT: CRPIX1 = {:.0f}'.format(signature_fmt_1))
