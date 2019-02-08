@@ -49,3 +49,7 @@ def read_first_image(file_name):
     print('RESULT: interactive = {}'.format(interactive))
 
     return header, pixels
+
+if __name__ == "__main__":
+    import sys
+    fib(int(sys.argv[1]))
