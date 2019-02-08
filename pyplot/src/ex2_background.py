@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import lib_fits
 import lib_background
+import scipy
 
 def main():
     """ Exercise 2: Background """
@@ -29,13 +30,30 @@ def main():
     signature_fmt_2 = 'RESULT: test_gaussian = {:3f}'.format(output_array.sum())
     print(signature_fmt_2)
 
+    norm_val, norm_bound = lib_background.normalize(lib_background.bin_values, lib_background.bin_boundaries)
+
+    #fit, covariant = scipy.optimize.curve_fit(lib_background.modelling_function, normal_bound, normal_val)
+
+    #maxvalue = fit[0] * lib_background(max_array(bin_values))
+    #background = fit[1] * lib_background(max_array(bin_boundaries))
+    #dispersion = fit[2] * lib_background(max_array(bin_boundaries))
+
+    results = lib_background.fit_and_return(norm_bound, norm_val)
+
+    yfit = lib_background.apply_model(lib_background.bin_boundaries[:-1], results[0], results[1], results[2])
+
     # graphic output
     if lib_fits.interactive:
-        # ...
-        pass
+        lib_background.plotting(lib_background.bin_boundaries[:-1], lib_background.bin_values, yfit)
 
-    # end
+    signature_fmt_3 = 'RESULT: background = {:d}'.format(int(results[1]))
+    signature_fmt_4 = 'RESULT: dispersion = {:d}'.format(int(results[2]))
+    print(signature_fmt_3)
+    print(signature_fmt_4)
+
     return 0
+
+
 
 
 if __name__ == '__main__':
