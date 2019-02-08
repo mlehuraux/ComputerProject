@@ -10,7 +10,7 @@ import lib_background
 def main():
     """ Exercise 2: Background """
 
-    # main tasks
+    # Main tasks
 
     lib_fits.init()
     print(lib_fits.file_name)
@@ -22,7 +22,12 @@ def main():
     print(signature_fmt_1)
 
 
+    # Modelling function test
+    input_array = np.arange(-10.0, 10.0, 1.0)
+    output_array = lib_background.apply_model(input_array, 1.0, 1.0, 1.0)
 
+    signature_fmt_2 = 'RESULT: test_gaussian = {:3f}'.format(output_array.sum())
+    print(signature_fmt_2)
 
     # graphic output
     if lib_fits.interactive:
