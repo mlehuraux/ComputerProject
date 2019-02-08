@@ -60,6 +60,7 @@ if __name__ == '__main__':
     """ Execute exercise 1 """
     #sys.exit(main())
     header, pixels = lib_fits.read_first_image('common')
-    print(pixels)
-    signature_fmt_1 = 'RESULT: CRPIX1 = {:.0f}'
-    signature_fmt_2 = 'RESULT: CRPIX2 = {:.0f}'
+    signature_fmt_1 = header.get("CRPIX1")
+    signature_fmt_2 = header.get("CRPIX2")
+    print('RESULT: CRPIX1 = {:.0f}'.format(signature_fmt_1))
+    print('RESULT: CRPIX2 = {:.0f}'.format(signature_fmt_2))
