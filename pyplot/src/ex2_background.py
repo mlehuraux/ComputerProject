@@ -2,23 +2,38 @@
 # -*- coding: utf-8 -*-
 import sys
 from npac import args
+import numpy as np
+import matplotlib.pyplot as plt
+import lib_fits
 
 def main():
     """ Exercise 2: Background """
 
-    # analyse command line arguments
-    file_name, interactive = args.get_args()
-
     # main tasks
-    # ...
 
-    # example of console output - please replace it with your solutions!
-    # ...
-    print('RESULT: file = {}'.format(file_name))
-    print('RESULT: interactive = {}'.format(interactive))
+    lib_fits.init()
+    print(lib_fits.file_name)
+    header, pixels = lib_fits.read_first_image(lib_fits.file_name)
+
+    histo = pixels.ravel()
+    print(histo)
+
+    bin_values, bin_boundaries = np.histogram(histo, 200)
+    print("histogram created")
+
+    fig, main_axes = plt.subplots()
+    plt.hist(histo,200)
+    plt.show()
+
+
+    signature_fmt_1 = 'RESULT: histogram = {:d}'.format(bin_values.sum())
+    print(signature_fmt_1)
+
+
+    
 
     # graphic output
-    if interactive:
+    if lib_fits.interactive:
         # ...
         pass
 
