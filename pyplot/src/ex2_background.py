@@ -5,6 +5,7 @@ from npac import args
 import numpy as np
 import matplotlib.pyplot as plt
 import lib_fits
+import lib_background
 
 def main():
     """ Exercise 2: Background """
@@ -15,22 +16,13 @@ def main():
     print(lib_fits.file_name)
     header, pixels = lib_fits.read_first_image(lib_fits.file_name)
 
-    histo = pixels.ravel()
-    print(histo)
+    lib_background.create_histo(pixels, 200)
 
-    bin_values, bin_boundaries = np.histogram(histo, 200)
-    print("histogram created")
-
-    fig, main_axes = plt.subplots()
-    plt.hist(histo,200)
-    plt.show()
-
-
-    signature_fmt_1 = 'RESULT: histogram = {:d}'.format(bin_values.sum())
+    signature_fmt_1 = 'RESULT: histogram = {:d}'.format(lib_background.bin_values.sum())
     print(signature_fmt_1)
 
 
-    
+
 
     # graphic output
     if lib_fits.interactive:
