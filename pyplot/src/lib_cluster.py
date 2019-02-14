@@ -1,75 +1,92 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
 from npac import args
-from matplotlib.patches import Circle, Wedge, Polygon
-from matplotlib.collections import PatchCollection
+from astropy.io import fits
+import numpy as np
 import matplotlib.pyplot as plt
-import lib_fits
+import scipy.optimize as scp
 import lib_background
 import lib_conv
-import lib_cluster
-
-def main():
-    """ Exercise 4: Clusters """
-
-    lib_fits.init()
-    print(lib_fits.file_name)
-    header, pixels = lib_fits.read_first_image(lib_fits.file_name)
-
-    thres = lib_background.threshold(pixels)
-
-    peaks = lib_conv.complete_peaks_search(pixels)
-    lums = lib_cluster.peak_lum(pixels, peaks)
-
-    clusters = []
-    for i in range(len(peaks)):
-        clust = lib_cluster.build_cluster(pixels, peaks[i], thres)
-        if clust == None :
-            continue
-        else :
-            clusters.append(clust)
-
-    signature_fmt_1 = 'RESULT: clusters_number={:d}'.format(len(clusters))
-    signature_fmt_2 = 'RESULT: cluster_max_top={:d}'.format(max(lums))
-
-    print(signature_fmt_1)
-    print(signature_fmt_2)
-
-    sort_clus = lib_cluster.sort_clusters(clusters, pixels)
-    bcfe = sort_clus[0]
-
-    fig, main_axes = plt.subplots()
-    main_axes.imshow(pixels)
-
-    for i in range(len(clusters)):
-        xleft = clusters[i].coord[0]-clusters[i].ext
-        xright =  clusters[i].coord[0] + clusters[i].ext
-        ybottom = clusters[i].coord[1]-clusters[i].ext
-        ytop = clusters[i].coord[1] + clusters[i].ext
-        squarex = [xleft, xright, xright, xleft, xleft]
-        squarey = [ybottom, ybottom, ytop, ytop, ybottom]
-        plt.plot(squarey, squarex, 'r--')
-
-    plt.show()
 
 
+class Cluster(object):
+    """ Define a class for cluster object
+    Characteristics :
+        - pixel coordinates of the peak
+        - integral
+        - extension
+    """
+    def ___init___(self,coord, lum, ext):
+        self.coord = coord
+        self.lum = lum
+        self.ext = ext
+        self.lumpeak = lumpeak
 
-    signature_fmt_3 = 'RESULT: cluster_max_integral={:d}'.format(bcfe.lum)
-    signature_fmt_4 = 'RESULT: cluster_max_column={:d}'.format(bcfe.coord[1])
-    signature_fmt_5 = 'RESULT: cluster_max_row={:d}'.format(bcfe.coord[0])
-    signature_fmt_6 = 'RESULT: cluster_max_extension={:d}'.format(bcfe.ext)
-
-    print(signature_fmt_3)
-    print(signature_fmt_4)
-    print(signature_fmt_5)
-    print(signature_fmt_6)
-
-
-
+def fmt(C):
+    print("Cluster coordinates : {} \nCluster luminosity :  {} \nCluster extension : {}".format(C.coord, C.lum, C.ext))
     return 0
 
+def npix_r(r):
+    return((2*r+1)**2)
 
-if __name__ == '__main__':
-    """ Execute exercise 3 """
-    sys.exit(main())
+def lum(pixels, r, i, j):
+    l = 0
+    for p in range(i-r,i+r+1):
+        for q in range(j-r, j+r+1):
+            l+=pixels[max(0, min(p, len(pixels)-1))][max(0, min(q, len(pixels[0])-1))]
+    return(l)
+
+def peak_lum(pixels, peaks):
+    lums=[]
+    for i in range(len(peaks)):
+        lums.append(pixels[peaks[i][0]][peaks[i][1]])
+    return(lums)
+
+def build_cluster(pixels, peak, threshold):
+
+    # Extract sub image
+    i = peak[0]
+    j = peak[1]
+
+    r = 1
+    avg = pixels[i][j]
+    integ0 = pixels[i][j]
+
+    while avg > threshold :
+        subimage = pixels[max(0, i-r): min(i+r+1, len(pixels)), max(0, j-r):min(j+r+1, len(pixels[0]))]
+        # Compute the pixel sum
+        integ = np.sum(subimage) - integ0
+        # Average
+        avg = np.float(integ)/(npix_r(r)-npix_r(r-1))
+        #print(r, integ, integ0, avg - threshold, threshold, (npix_r(r)-npix_r(r-1)))
+        integ0 = np.sum(subimage)
+        r+=1
+    if r-2<1 :
+        print("Cluster rejected")
+        return
+    else :
+        C = Cluster()
+        C.coord = [i, j]
+        C.lum = lum(pixels, r-2, i, j)
+        C.ext = r-2
+        C.lumpeak = pixels[i][j]
+        #fmt(C)
+
+        return(C)
+
+def sort_clusters(clusters, pixels):
+
+    sorted_clusters = sorted(clusters, key=lambda cluster: cluster.lum, reverse=True)
+    test = []
+
+    for i in range(len(sorted_clusters)-2):
+        begin = i
+        end = i
+        while sorted_clusters[i].lum == sorted_clusters[end+1].lum:
+            end+=1
+        sorted(clusters[begin:end+1], key=lambda cluster: cluster.lumpeak, reverse=True)
+        test.append([sorted_clusters[i].lum, sorted_clusters[i].lumpeak])
+    #print(test)
+    return(sorted_clusters)
+
+
