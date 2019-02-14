@@ -71,19 +71,33 @@ def build_cluster(pixels, peak, threshold):
 def sort_clusters(clusters, pixels):
 
     sorted_clusters = [clusters[0]]
+    sorted_lums = [clusters[0].lum]
 
     for i in range(1,len(clusters)):
         if clusters[i].lum < sorted_clusters[i-1].lum :
             sorted_clusters.append(clusters[i])
-        elif clusters[i].lum == sorted_clusters[i-1].lum :
-            if pixels[clusters[i].coord[0]][clusters[i].coord[1]] < pixels[sorted_clusters[i].coord[0]][sorted_clusters[i].coord[1]] :
-                sorted_clusters.append(clusters[i])
+        else :
+            j = i
+            while clusters[i].lum >= sorted_clusters[j-1].lum and j>1:
+                j-=1
+            if clusters[i].lum == sorted_clusters[j-1].lum :
+                if pixels[clusters[i].coord[0]][clusters[i].coord[1]] < pixels[sorted_clusters[j-1].coord[0]][sorted_clusters[j-1].coord[1]] :
+                     sorted_clusters.insert(j-1, clusters[i])
+                     sorted_lums.insert(j-1, clusters[i].lum)
+                else :
+                    k = j-1
+                    while pixels[clusters[i].coord[0]][clusters[i].coord[1]] >= pixels[sorted_clusters[k-1].coord[0]][sorted_clusters[k-1].coord[1]] and k>1: :
+                        k-=1
+                    sorted_clusters.insert(k-1, clusters[i])
+                    sorted_lums.insert(k-1, clusters[i].lum)
             else :
-                sorted_clusters.insert(i-1,clusters[i])
-        else:
-            sorted_clusters.insert(i - 1, clusters[i])
+                sorted_clusters.insert(j-1, clusters[i])
+                sorted_lums.insert(j-1, clusters[i].lum)
+
+
+
+
+
 
 
     return(sorted_clusters)
-
-
