@@ -94,10 +94,5 @@ def sort_clusters(clusters, pixels):
                 sorted_clusters.insert(j-1, clusters[i])
                 sorted_lums.insert(j-1, clusters[i].lum)
 
-
-
-
-
-
-
+    print(sorted_lums)
     return(sorted_clusters)
