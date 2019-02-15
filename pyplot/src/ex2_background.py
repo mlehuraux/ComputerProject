@@ -32,12 +32,6 @@ def main():
 
     norm_val, norm_bound = lib_background.normalize(lib_background.bin_values, lib_background.bin_boundaries)
 
-    #fit, covariant = scipy.optimize.curve_fit(lib_background.modelling_function, normal_bound, normal_val)
-
-    #maxvalue = fit[0] * lib_background(max_array(bin_values))
-    #background = fit[1] * lib_background(max_array(bin_boundaries))
-    #dispersion = fit[2] * lib_background(max_array(bin_boundaries))
-
     results = lib_background.fit_and_return(norm_bound, norm_val)
 
     yfit = lib_background.apply_model(lib_background.bin_boundaries[:-1], results[0], results[1], results[2])

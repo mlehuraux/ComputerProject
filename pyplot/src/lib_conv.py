@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-import sys
-from npac import args
-from astropy.io import fits
 import numpy as np
-import matplotlib.pyplot as plt
-import scipy.optimize as scp
 import lib_background
 
 def pattern(size):
+    """
+    Give the 2D array convolution pattern for a given size.
+    """
 
     x = np.arange(size)
     y = np.arange(size)
@@ -22,54 +20,55 @@ def pattern(size):
 
     return(pattern)
 
-def extend(x,l):
-
+def extend(pixels,margin):
     """
-    Extend image with l lines and l columns on each side.
-
+    Extend image with margin lines and margin columns on each side.
     """
 
-    for i in range(l):
-        x = np.insert(x, 0, 0, axis=1)
+    for i in range(margin):
+        pixels = np.insert(pixels, 0, 0, axis=1)
 
-    top_bloc = np.array(l*[len(x[0])*[0]])
-    x = np.concatenate((x, top_bloc), axis=0)
-    x = np.concatenate((top_bloc, x), axis=0)
+    top_bloc = np.array(margin*[len(pixels[0])*[0]])
+    pixels = np.concatenate((pixels, top_bloc), axis=0)
+    pixels = np.concatenate((top_bloc, pixels), axis=0)
 
-    side_bloc = np.array(len(x)*[l*[0]])
-    x = np.concatenate((x, side_bloc), axis=1)
+    side_bloc = np.array(len(pixels)*[margin*[0]])
+    pixels = np.concatenate((pixels, side_bloc), axis=1)
 
-    return(x)
+    return(pixels)
 
-def scan(pixels, l, pattern):
+def scan(pixels, margin, pattern):
     """
     Scan the original image and apply the pattern.
     """
     shape = np.shape(pixels)
-    output = np.zeros((shape[0]-2*l, shape[1]-2*l), np.float)
+    output = np.zeros((shape[0]-2*margin, shape[1]-2*margin), np.float)
     # Looping over
-    for i in range(l, len(pixels)-l):
-        for j in range(l, len(pixels[0])-l):
+    for i in range(margin, len(pixels)-margin):
+        for j in range(margin, len(pixels[0])-margin):
             # Create sub image 9x9 centered on pixel[i][j]
-            image = pixels[i-l:i+l+1, j-l:j+l+1]
-            output[i-l, j-l] = np.sum(image * pattern)
+            image = pixels[i-margin:i+margin+1, j-margin:j+margin+1]
+            output[i-margin, j-margin] = np.sum(image * pattern)
 
     return(output)
 
-def neighbours(x, i,j):
+def neighbours(pixels,i,j):
     """
-    Give access to all neighbours' values of a given pixel
+    Give access to all neighbours' values of a given pixel.
     """
     next=[]
     for p in range(-1,2):
         for q in range(-1,2):
-            next.append(x[i+p][j+q])
-    next.remove(x[i][j])
+            next.append(pixels[i+p][j+q])
+    next.remove(pixels[i][j])
     return(next)
 
 
 def is_peak(x, i, j, threshold):
-
+    """
+    For a pixel, To be a peak or not to be a peak, that is the question.
+    This function gives the answer.
+    """
     okpeak = False
 
     if np.sum(x[i][j] > neighbours(x,i,j)) == 8 and x[i][j] > threshold:
@@ -78,17 +77,25 @@ def is_peak(x, i, j, threshold):
 
     return(okpeak)
 
-def peaks(pixels, l, threshold):
+def peaks(pixels, margin, threshold):
+    """
+    Returns list of all the peaks.
+    """
     peaks = []
-    # Looping over
-    for i in range(l, len(pixels) - l):
-        for j in range(l, len(pixels[0]) - l):
+
+    # Looping over all pixel of the image.
+    for i in range(margin, len(pixels) - margin):
+        for j in range(margin, len(pixels[0]) - margin):
             if is_peak(pixels, i, j, threshold):
-                peaks.append([i-l,j-l])
+                peaks.append([i-margin,j-margin])
 
     return(peaks)
 
 def complete_peaks_search(pixels):
+    """
+    From pixels; retunrs directly the list of peaks, going through convoluted imgage.
+    Result of ex3.
+    """
 
     # Build Gaussian pattern
     pat = pattern(9)

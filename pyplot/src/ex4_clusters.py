@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from npac import args
-from matplotlib.patches import Circle, Wedge, Polygon
-from matplotlib.collections import PatchCollection
 import matplotlib.pyplot as plt
 import lib_fits
 import lib_background
@@ -36,12 +33,13 @@ def main():
     print(signature_fmt_1)
     print(signature_fmt_2)
 
-    sort_clus = lib_cluster.sort_clusters(clusters, pixels)
+    sort_clus = lib_cluster.sort_clusters(clusters)
     bcfe = sort_clus[0]
 
     fig, main_axes = plt.subplots()
     main_axes.imshow(pixels)
 
+    # Draws clusters arround peaks.
     for i in range(len(clusters)):
         xleft = clusters[i].coord[0]-clusters[i].ext
         xright =  clusters[i].coord[0] + clusters[i].ext

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import sys
-from npac import args
 import lib_fits
 import lib_background
 import numpy as np

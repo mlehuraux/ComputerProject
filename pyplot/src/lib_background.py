@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import sys
-from npac import args
-from astropy.io import fits
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.optimize as scp
 
 def create_histo(pixels, nbins):
-    """Create histogram with nbins bins out of pixels 2D np.array"""
+    """
+    Create histogram with nbins bins out of pixels 2D array.
+    """
     global histo
     global bin_values
     global bin_boundaries
@@ -23,16 +22,16 @@ def create_histo(pixels, nbins):
 def modelling_function(x, p1, p2, p3):
     """
     Compute a gaussian function with parameters :
-    p1 : maximum value
-    p2 : mean value
-    p3 : standard deviation sigma
+    p1 : maximum value,
+    p2 : mean value,
+    p3 : standard deviation sigma.
     """
     y = p1 * np.exp(-(x - p2)**2 / (2 * p3**2))
     return y
 
 def apply_model(input_array, p1, p2, p3):
     """
-    Compute expected value of modeling function on input_array
+    Compute expected value of modeling function on input_array.
     """
 
     output_array = []
@@ -42,7 +41,7 @@ def apply_model(input_array, p1, p2, p3):
 
 def normalize(bin_values, bin_boundaries):
     """
-    Normalize the histogram
+    Normalize the histogram.
     """
     mval = np.float(np.max(bin_values))
     mbound = np.float(np.max(bin_boundaries))
@@ -52,13 +51,13 @@ def normalize(bin_values, bin_boundaries):
 
 def max_array(input):
     """
-    Extract max vlue of input_array
+    Extract max value of input_array.
     """
     return(np.float(np.max(input)))
 
 def fit_and_return(normal_bound, normal_val):
     """
-    Fit the histogram and return un-normalized fit parameters
+    Fit the histogram and return the un-normalized fit parameters.
     """
     fit, covariant = scp.curve_fit(modelling_function, normal_bound, normal_val)
 
@@ -70,7 +69,7 @@ def fit_and_return(normal_bound, normal_val):
 
 def plotting(x1, y1, y2):
     """
-    Plot the original histogram and its fit
+    Plot the original histogram and its fit.
     """
     fig, main_axes = plt.subplots()
     plt.plot(x1, y1, 'b+:', label='data')
@@ -89,6 +88,10 @@ def plotting(x1, y1, y2):
 
 
 def threshold(pixels):
+    """
+    From the pixels 2D array, fits the histogram.
+    From fit parameters, give the threshold.
+    """
 
     create_histo(pixels, 200)
 

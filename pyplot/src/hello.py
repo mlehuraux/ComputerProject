@@ -9,13 +9,11 @@
 First program hello.py: display "Hello, world!" on standard output.
 """
 
-print("Best Binome Ever")
-
 import sys
 
 # By convention, a function name must contain only lowercase characters and _.
 # txt=None defines a default value for string and makes it optional.
-def PrintMsg(txt=None):
+def printmsg(txt=None):
     """Print a message received as an argument or a default message
     if none is passed.
 
@@ -37,6 +35,6 @@ if __name__ == "__main__":
     # The main program is implemented mainly as a function: this avoids having
     # all the variables used in this context (e.g. text in print_msg) to
     # become global variables.
-    status = PrintMsg()
-    status = PrintMsg("Coucou")
+    status = printpsg()
+
     sys.exit(status)
