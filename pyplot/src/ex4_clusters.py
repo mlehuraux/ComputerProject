@@ -22,10 +22,13 @@ def main():
     peaks = lib_conv.complete_peaks_search(pixels)
     lums = lib_cluster.peak_lum(pixels, peaks)
 
-
     clusters = []
     for i in range(len(peaks)):
-        clusters.append(lib_cluster.build_cluster(pixels, peaks[i], thres))
+        clust = lib_cluster.build_cluster(pixels, peaks[i], thres)
+        if clust == None :
+            continue
+        else :
+            clusters.append(clust)
 
     signature_fmt_1 = 'RESULT: clusters_number={:d}'.format(len(clusters))
     signature_fmt_2 = 'RESULT: cluster_max_top={:d}'.format(max(lums))
@@ -34,7 +37,6 @@ def main():
     print(signature_fmt_2)
 
     sort_clus = lib_cluster.sort_clusters(clusters, pixels)
-
     bcfe = sort_clus[0]
 
     fig, main_axes = plt.subplots()
@@ -47,7 +49,7 @@ def main():
         ytop = clusters[i].coord[1] + clusters[i].ext
         squarex = [xleft, xright, xright, xleft, xleft]
         squarey = [ybottom, ybottom, ytop, ytop, ybottom]
-        plt.plot(squarex, squarey, 'r--')
+        plt.plot(squarey, squarex, 'r--')
 
     plt.show()
 
